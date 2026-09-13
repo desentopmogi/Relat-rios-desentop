@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Desentop Mogi — Relatório Contrato Anual</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --gold:#F2B705;
+    --gold-dark:#B8860B;
+    --black:#171717;
+    --navy:#1E3A5F;
+    --brown:#4A3418;
+    --purple:#3A1F4D;
+    --purple2:#5B2C6F;
+    --green:#1E8449;
+    --red:#C0392B;
+    --gray:#9CA3AF;
+    --bg:#F4F5F7;
+    --card:#FFFFFF;
+    --text:#1F2430;
+    --muted:#6B7280;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:40px;
+  }
+  header.brand{
+    background:linear-gradient(135deg,var(--gold),#E0A500);
+    padding:18px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .brand-left{display:flex;align-items:center;gap:12px;}
+  .logo-circle{
+    width:46px;height:46px;border-radius:50%;
+    background:var(--black);
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .logo-circle svg{width:26px;height:26px;}
+  .brand-title{line-height:1.15;}
+  .brand-title .name{font-weight:800;font-size:18px;color:#1a1a1a;}
+  .brand-title .sub{font-weight:700;font-size:10.5px;letter-spacing:.06em;color:#4a3a00;text-transform:uppercase;}
+  .contract-badge{
+    background:var(--black);
+    color:var(--gold);
+    font-size:11px;font-weight:700;
+    padding:6px 12px;border-radius:999px;
+    white-space:nowrap;
+  }
+  main{max-width:640px;margin:0 auto;padding:14px;}
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+    overflow:hidden;
+  }
+  .card-header{
+    padding:12px 16px;
+    color:#fff;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.03em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card-body{padding:16px;}
+  .card-body.pad-tight{padding:14px 16px 4px;}
+  .h-dados{background:var(--black);}
+  .h-pacote{background:var(--gold-dark);}
+  .h-servicos{background:var(--navy);}
+  .h-ocorr{background:var(--brown);}
+  .h-fotos{background:var(--purple);}
+  .h-assin{background:var(--purple2);}
+
+  label.field-label{
+    display:block;
+    font-size:10.5px;
+    font-weight:700;
+    color:var(--muted);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-bottom:4px;
+  }
+  .field-label .req{color:var(--red);}
+  .field{margin-bottom:14px;}
+  input[type=text], input[type=date], input[type=time], input[type=number], textarea{
+    width:100%;
+    border:1px solid #D8DBE0;
+    border-radius:8px;
+    padding:10px 11px;
+    font-size:15px;
+    font-family:inherit;
+    color:var(--text);
+    background:#fff;
+  }
+  textarea{resize:vertical;min-height:64px;}
+  input:focus, textarea:focus{outline:2px solid var(--gold);border-color:var(--gold);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:420px){.row2{grid-template-columns:1fr;}}
+
+  .chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    border:1.5px solid #D8DBE0;
+    background:#fff;
+    color:var(--text);
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+    transition:all .12s;
+  }
+  .chip.on-green{background:var(--green);border-color:var(--green);color:#fff;}
+  .chip.on-gold{background:var(--gold-dark);border-color:var(--gold-dark);color:#fff;}
+
+  .pacote-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px;}
+  .pacote-btn{
+    border:1.5px solid #D8DBE0;
+    background:#fff;
+    border-radius:10px;
+    padding:14px 4px;
+    text-align:center;
+    font-weight:800;
+    font-size:15px;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .pacote-btn small{display:block;font-weight:600;font-size:9.5px;color:var(--muted);margin-top:2px;text-transform:uppercase;}
+  .pacote-btn.on{background:var(--gold);border-color:var(--gold-dark);color:#1a1a1a;}
+  .pacote-btn.on small{color:#4a3a00;}
+
+  .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  @media (max-width:420px){.stat-row{grid-template-columns:1fr;}}
+  .stat-box{
+    border:1.5px solid #D8DBE0;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#FAFBFC;
+  }
+  .stat-box label.field-label{margin-bottom:6px;}
+  .stepper{display:flex;align-items:center;gap:10px;}
+  .stepper button{
+    width:34px;height:34px;border-radius:8px;border:1.5px solid #D8DBE0;
+    background:#fff;font-size:18px;font-weight:700;color:var(--navy);cursor:pointer;
+  }
+  .stepper input{text-align:center;font-weight:800;font-size:18px;width:100%;}
+
+  .section-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 8px;}
+
+  .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  @media (max-width:420px){.photo-grid{grid-template-columns:1fr;}}
+  .photo-card{border:1.5px solid #D8DBE0;border-radius:10px;overflow:hidden;background:#FAFBFC;}
+  .photo-card img{width:100%;height:140px;object-fit:cover;display:block;background:#eee;}
+  .photo-card .legend-wrap{padding:8px;}
+  .photo-card input{font-size:12.5px;padding:6px 8px;}
+  .photo-card .remove-btn{
+    display:block;width:100%;background:none;border:none;border-top:1px solid #eee;
+    color:var(--red);font-weight:700;font-size:12px;padding:7px;cursor:pointer;
+  }
+  .add-photo-btn{
+    width:100%;padding:14px;border:2px dashed #C9CDD3;border-radius:10px;
+    background:#FAFBFC;color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;
+  }
+  .photo-hint{font-size:11.5px;color:var(--muted);margin-bottom:10px;}
+
+  .sig-block{margin-bottom:18px;}
+  .sig-block:last-child{margin-bottom:0;}
+  canvas.sig-pad{
+    width:100%;height:140px;border:1.5px dashed #C9CDD3;border-radius:10px;
+    background:#fff;touch-action:none;display:block;
+  }
+  .sig-actions{display:flex;justify-content:flex-end;margin-top:6px;}
+  .sig-actions button{
+    background:none;border:none;color:var(--navy);font-weight:700;font-size:12.5px;cursor:pointer;
+  }
+
+  .actions{max-width:640px;margin:18px auto 0;padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+  .btn-primary{
+    background:var(--gold);color:#1a1a1a;font-weight:800;font-size:16px;
+    border:none;border-radius:10px;padding:16px;cursor:pointer;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  .btn-secondary{
+    background:#fff;color:var(--navy);font-weight:700;font-size:14px;
+    border:1.5px solid #D8DBE0;border-radius:10px;padding:12px;cursor:pointer;
+  }
+  .btn-whatsapp{
+    background:#25D366;color:#fff;font-weight:800;font-size:15px;
+    border:none;border-radius:10px;padding:14px;cursor:pointer;display:none;
+  }
+  .footnote{text-align:center;font-size:11px;color:var(--muted);margin-top:16px;padding:0 20px;}
+  .status-msg{
+    max-width:640px;margin:10px auto 0;padding:10px 14px;border-radius:8px;
+    font-size:13.5px;font-weight:600;display:none;
+  }
+  .status-msg.ok{background:#E6F4EA;color:#1E8449;display:block;}
+  .status-msg.err{background:#FDECEA;color:#C0392B;display:block;}
+</style>
+</head>
+<body>
+
+<header class="brand">
+  <div class="brand-left">
+    <div class="logo-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 15c2 2 4 2 6 0s4-2 6 0 4 2 6 0" stroke="#F2B705" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 19c2 2 4 2 6 0s4-2 6 0 4 2 6 0" stroke="#F2B705" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+        <circle cx="12" cy="8" r="3.2" stroke="#F2B705" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="brand-title">
+      <div class="name">Desentop Mogi</div>
+      <div class="sub">Relatório · Contrato Anual</div>
+    </div>
+  </div>
+  <div class="contract-badge">Caixa de Gordura / Esgoto</div>
+</header>
+
+<main>
+
+  <div class="status-msg" id="statusMsg"></div>
+
+  <!-- DADOS DA VISITA -->
+  <div class="card">
+    <div class="card-header h-dados">📋 DADOS DA VISITA</div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Cliente / Condomínio <span class="req">*</span></label>
+        <input type="text" id="f_cliente" placeholder="Nome do condomínio">
+      </div>
+      <div class="field">
+        <label class="field-label">Endereço</label>
+        <input type="text" id="f_endereco" placeholder="Endereço do local atendido">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="field-label">Data <span class="req">*</span></label>
+          <input type="date" id="f_data">
+        </div>
+        <div class="field">
+          <label class="field-label">Técnico <span class="req">*</span></label>
+          <input type="text" id="f_tecnico" placeholder="Nome do técnico">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label class="field-label">Início</label>
+          <input type="time" id="f_inicio">
+        </div>
+        <div class="field">
+          <label class="field-label">Término</label>
+          <input type="time" id="f_termino">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Equipe (nomes)</label>
+        <input type="text" id="f_equipe" placeholder="Ex: Leandro, Paulo">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label class="field-label">Responsável pelo acompanhamento</label>
+        <input type="text" id="f_responsavel" placeholder="Nome do síndico/zelador">
+      </div>
+    </div>
+  </div>
+
+  <!-- PACOTE ANUAL -->
+  <div class="card">
+    <div class="card-header h-pacote">📅 VISITA DO PACOTE ANUAL</div>
+    <div class="card-body">
+      <label class="field-label">Qual visita do contrato é esta? <span class="req">*</span></label>
+      <div class="pacote-grid" id="pacoteGrid">
+        <div class="pacote-btn" data-v="1">1ª<small>visita</small></div>
+        <div class="pacote-btn" data-v="2">2ª<small>visita</small></div>
+        <div class="pacote-btn" data-v="3">3ª<small>visita</small></div>
+        <div class="pacote-btn" data-v="4">4ª<small>visita</small></div>
+      </div>
+      <div class="photo-hint">Contrato anual — pacote de 4 visitas técnicas.</div>
+    </div>
+  </div>
+
+  <!-- SERVIÇOS REALIZADOS -->
+  <div class="card">
+    <div class="card-header h-servicos">🔧 SERVIÇOS REALIZADOS</div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat-box">
+          <label class="field-label">Nº de caixas esgotadas</label>
+          <div class="stepper">
+            <button type="button" onclick="stepper('n_esgotadas',-1)">−</button>
+            <input type="number" id="n_esgotadas" value="0" min="0">
+            <button type="button" onclick="stepper('n_esgotadas',1)">+</button>
+          </div>
+        </div>
+        <div class="stat-box">
+          <label class="field-label">Nº de caixas c/ hidrojateamento</label>
+          <div class="stepper">
+            <button type="button" onclick="stepper('n_hidro',-1)">−</button>
+            <input type="number" id="n_hidro" value="0" min="0">
+            <button type="button" onclick="stepper('n_hidro',1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Demais serviços realizados</div>
+      <div class="chip-group" id="servicosChips" style="margin-bottom:14px;">
+        <div class="chip" data-item="Limpeza de caixa de gordura">Limpeza de caixa de gordura</div>
+        <div class="chip" data-item="Limpeza de caixa de esgoto">Limpeza de caixa de esgoto</div>
+        <div class="chip" data-item="Desobstrução / desentupimento de tubulação">Desobstrução / desentupimento</div>
+        <div class="chip" data-item="Limpeza de caixa de inspeção">Limpeza de caixa de inspeção</div>
+        <div class="chip" data-item="Limpeza de calhas / grelhas">Limpeza de calhas / grelhas</div>
+        <div class="chip" data-item="Raspagem de gordura acumulada">Raspagem de gordura acumulada</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Outro serviço (opcional)</label>
+        <input type="text" id="f_outro_servico" placeholder="Descreva, se houver">
+      </div>
+
+      <div class="field" style="margin-bottom:0;">
+        <label class="field-label">Observações — serviços realizados</label>
+        <textarea id="f_obs_servicos" placeholder="Ex: caixas com acesso difícil, tampa danificada..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCORRÊNCIAS E RECOMENDAÇÕES -->
+  <div class="card">
+    <div class="card-header h-ocorr">⚠️ OCORRÊNCIAS E RECOMENDAÇÕES</div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Ocorrências identificadas</label>
+        <textarea id="f_ocorrencias" placeholder="Descreva os problemas encontrados..."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">Recomendações</label>
+        <textarea id="f_recomendacoes" placeholder="Ex: agendar limpa-fossa, reparar tampa..."></textarea>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label class="field-label">Observações adicionais</label>
+        <textarea id="f_obs_adicionais" placeholder="Qualquer informação relevante..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRO FOTOGRÁFICO -->
+  <div class="card">
+    <div class="card-header h-fotos">📷 REGISTRO FOTOGRÁFICO</div>
+    <div class="card-body">
+      <div class="photo-hint">Até 6 fotos. Toque para tirar foto ou escolher da galeria.</div>
+      <div class="photo-grid" id="photoGrid"></div>
+      <button type="button" class="add-photo-btn" id="addPhotoBtn">+ Adicionar foto</button>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
+    </div>
+  </div>
+
+  <!-- ASSINATURAS -->
+  <div class="card">
+    <div class="card-header h-assin">✍️ ASSINATURAS</div>
+    <div class="card-body">
+      <div class="sig-block">
+        <label class="field-label">Nome do responsável pela visita</label>
+        <input type="text" id="f_nome_visita" placeholder="Nome do técnico" style="margin-bottom:8px;">
+        <label class="field-label">Assinatura</label>
+        <canvas class="sig-pad" id="sig1"></canvas>
+        <div class="sig-actions"><button type="button" onclick="clearSig('sig1')">Limpar assinatura</button></div>
+      </div>
+      <div class="sig-block">
+        <label class="field-label">Nome do responsável pelo acompanhamento</label>
+        <input type="text" id="f_nome_acomp" placeholder="Nome do síndico/zelador" style="margin-bottom:8px;">
+        <label class="field-label">Assinatura</label>
+        <canvas class="sig-pad" id="sig2"></canvas>
+        <div class="sig-actions"><button type="button" onclick="clearSig('sig2')">Limpar assinatura</button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="actions">
+  <button class="btn-primary" id="gerarBtn">Gerar PDF do Relatório</button>
+  <button class="btn-whatsapp" id="shareBtn">Compartilhar via WhatsApp</button>
+  <button class="btn-secondary" id="limparBtn">Limpar formulário</button>
+</div>
+
+<div class="footnote">Desentop Mogi — Relatório de Visita Técnica (Contrato Anual)</div>
+
+<script>
+/* ---------- Selection state ---------- */
+let pacoteSelecionado = null;
+const servicosSelecionados = new Set();
+const photos = []; // {dataUrl, legend}
+
+/* Pacote buttons */
+document.querySelectorAll('.pacote-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.pacote-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    pacoteSelecionado = btn.dataset.v;
+  });
+});
+
+/* Serviços chips (multi-select) */
+document.querySelectorAll('#servicosChips .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    const item = chip.dataset.item;
+    if(servicosSelecionados.has(item)){
+      servicosSelecionados.delete(item);
+      chip.classList.remove('on-green');
+    } else {
+      servicosSelecionados.add(item);
+      chip.classList.add('on-green');
+    }
+  });
+});
+
+/* Stepper */
+function stepper(id, delta){
+  const el = document.getElementById(id);
+  let v = parseInt(el.value||'0',10) + delta;
+  if(v<0) v=0;
+  el.value = v;
+}
+
+/* Photos */
+const photoGrid = document.getElementById('photoGrid');
+const photoInput = document.getElementById('photoInput');
+document.getElementById('addPhotoBtn').addEventListener('click', ()=>{
+  if(photos.length >= 6){ showStatus('Máximo de 6 fotos.', 'err'); return; }
+  photoInput.click();
+});
+photoInput.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    const photo = {dataUrl: ev.target.result, legend: ''};
+    photos.push(photo);
+    renderPhotos();
+  };
+  reader.readAsDataURL(file);
+  photoInput.value = '';
+});
+function renderPhotos(){
+  photoGrid.innerHTML = '';
+  photos.forEach((p, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `
+      <img src="${p.dataUrl}">
+      <div class="legend-wrap">
+        <input type="text" placeholder="Legenda (opcional)" value="${p.legend.replace(/"/g,'&quot;')}" data-idx="${idx}">
+      </div>
+      <button type="button" class="remove-btn" data-idx="${idx}">Remover foto</button>
+    `;
+    photoGrid.appendChild(card);
+  });
+  photoGrid.querySelectorAll('input[type=text]').forEach(inp=>{
+    inp.addEventListener('input', (e)=>{ photos[e.target.dataset.idx].legend = e.target.value; });
+  });
+  photoGrid.querySelectorAll('.remove-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ photos.splice(e.target.dataset.idx,1); renderPhotos(); });
+  });
+}
+
+/* ---------- Signature pads ---------- */
+function setupSig(canvasId){
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  function resize(){
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    ctx.scale(ratio, ratio);
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#1F2430';
+  }
+  resize();
+  let drawing = false, last = null;
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return {x: t.clientX-rect.left, y: t.clientY-rect.top};
+  }
+  function start(e){ drawing=true; last=pos(e); canvas.dataset.used='1'; e.preventDefault(); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    last = p; e.preventDefault();
+  }
+  function end(){ drawing=false; }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+  window.addEventListener('resize', ()=>{ const data=canvas.toDataURL(); resize(); });
+}
+setupSig('sig1');
+setupSig('sig2');
+function clearSig(canvasId){
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  canvas.dataset.used='';
+}
+
+/* ---------- Status message ---------- */
+function showStatus(msg, type){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + type;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------- Clear form ---------- */
+document.getElementById('limparBtn').addEventListener('click', ()=>{
+  if(!confirm('Limpar todos os campos do formulário?')) return;
+  document.querySelectorAll('input[type=text], input[type=date], input[type=time], input[type=number], textarea').forEach(el=>{
+    if(el.type==='number'){ el.value='0'; } else { el.value=''; }
+  });
+  document.querySelectorAll('.pacote-btn').forEach(b=>b.classList.remove('on'));
+  pacoteSelecionado = null;
+  document.querySelectorAll('#servicosChips .chip').forEach(c=>c.classList.remove('on-green'));
+  servicosSelecionados.clear();
+  photos.length = 0;
+  renderPhotos();
+  clearSig('sig1'); clearSig('sig2');
+  document.getElementById('shareBtn').style.display='none';
+  showStatus('Formulário limpo.', 'ok');
+});
+
+/* ---------- PDF generation ---------- */
+let lastPdfBlob = null;
+let lastPdfName = 'relatorio.pdf';
+
+function val(id){ return document.getElementById(id).value.trim(); }
+function fmtDate(iso){
+  if(!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function todayISOForFooter(){
+  const d = new Date();
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+document.getElementById('gerarBtn').addEventListener('click', gerarPDF);
+document.getElementById('shareBtn').addEventListener('click', compartilharWhatsApp);
+
+function gerarPDF(){
+  const cliente = val('f_cliente');
+  const data = val('f_data');
+  const tecnico = val('f_tecnico');
+
+  if(!cliente || !data || !tecnico || !pacoteSelecionado){
+    showStatus('Preencha os campos obrigatórios: Cliente, Data, Técnico e a Visita do pacote.', 'err');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const marginX = 40;
+  const contentW = pageW - marginX*2;
+  let y = 0;
+
+  const COLORS = {
+    gold:[242,183,5], goldDark:[184,134,11], black:[23,23,23],
+    navy:[30,58,95], brown:[74,52,24], purple:[58,31,77], purple2:[91,44,111],
+    green:[30,132,73], gray:[156,163,175], text:[31,36,48], muted:[107,114,128],
+    line:[216,219,224], cardBg:[250,251,252]
+  };
+
+  function newPage(){
+    doc.addPage();
+    y = 0;
+    drawRunningHeader();
+  }
+  function ensureSpace(h){
+    if(y + h > pageH - 50){ newPage(); }
+  }
+  function drawRunningHeader(){
+    doc.setFillColor(...COLORS.gold);
+    doc.rect(0,0,pageW,42,'F');
+    doc.setTextColor(26,26,26);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(12);
+    doc.text('Desentop Mogi', marginX, 27);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(74,58,0);
+    doc.text('Relatório de Visita Técnica — Contrato Anual', marginX+110, 27);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(26,26,26);
+    doc.text(cliente, pageW-marginX, 27, {align:'right'});
+    y = 60;
+  }
+
+  function sectionHeader(title, color){
+    ensureSpace(34);
+    doc.setFillColor(...color);
+    doc.roundedRect(marginX, y, contentW, 26, 4, 4, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.text(title, marginX+12, y+17.5);
+    y += 26 + 10;
+  }
+
+  function fieldLine(label, value, x, w){
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7.3);
+    doc.setTextColor(...COLORS.muted);
+    doc.text(label.toUpperCase(), x, y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...COLORS.text);
+    const lines = doc.splitTextToSize(value || '—', w);
+    doc.text(lines, x, y+13);
+    return 13 + (lines.length-1)*13;
+  }
+
+  function twoCol(labelA, valA, labelB, valB){
+    ensureSpace(34);
+    const colW = (contentW-16)/2;
+    const h1 = fieldLine(labelA, valA, marginX, colW);
+    const savedY = y;
+    y = savedY;
+    const h2 = fieldLine(labelB, valB, marginX+colW+16, colW);
+    y = savedY + Math.max(h1,h2) + 14;
+  }
+  function oneField(label, value){
+    ensureSpace(30);
+    const h = fieldLine(label, value, marginX, contentW);
+    y += h + 14;
+  }
+  function textBlock(label, value){
+    ensureSpace(30);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7.3);
+    doc.setTextColor(...COLORS.muted);
+    doc.text(label.toUpperCase(), marginX, y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(...COLORS.text);
+    const text = value || '—';
+    const lines = doc.splitTextToSize(text, contentW);
+    let ly = y + 14;
+    lines.forEach(line=>{
+      ensureSpace(16);
+      if(ly !== y+14 && y===0){ ly = y+14; } // safety
+      doc.text(line, marginX, ly);
+      ly += 13.5;
+      y = ly - 13.5;
+    });
+    y = ly + 6;
+  }
+
+  // ---- PAGE 1 ----
+  drawRunningHeader();
+
+  // DADOS DA VISITA
+  sectionHeader('DADOS DA VISITA', COLORS.black);
+  oneField('Cliente / Condomínio', cliente);
+  oneField('Endereço', val('f_endereco'));
+  twoCol('Data', fmtDate(data), 'Técnico', tecnico);
+  twoCol('Início', val('f_inicio') || '—', 'Término', val('f_termino') || '—');
+  oneField('Equipe (nomes)', val('f_equipe'));
+  oneField('Responsável pelo acompanhamento', val('f_responsavel'));
+
+  // PACOTE ANUAL
+  sectionHeader('VISITA DO PACOTE ANUAL', COLORS.goldDark);
+  ensureSpace(46);
+  const boxW = (contentW - 3*10)/4;
+  ['1','2','3','4'].forEach((n,i)=>{
+    const bx = marginX + i*(boxW+10);
+    const selected = (n === pacoteSelecionado);
+    doc.setDrawColor(...COLORS.line);
+    doc.setFillColor(...(selected? COLORS.gold : [255,255,255]));
+    doc.roundedRect(bx, y, boxW, 36, 5, 5, selected?'FD':'D');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...(selected? [26,26,26] : COLORS.gray));
+    doc.text(n+'ª', bx+boxW/2, y+22, {align:'center'});
+  });
+  y += 36 + 16;
+
+  // SERVIÇOS REALIZADOS
+  sectionHeader('SERVIÇOS REALIZADOS', COLORS.navy);
+  ensureSpace(50);
+  const statW = (contentW-16)/2;
+  [
+    ['Nº de caixas esgotadas', val('n_esgotadas')||'0'],
+    ['Nº de caixas c/ hidrojateamento', val('n_hidro')||'0']
+  ].forEach((s,i)=>{
+    const bx = marginX + i*(statW+16);
+    doc.setDrawColor(...COLORS.line);
+    doc.setFillColor(...COLORS.cardBg);
+    doc.roundedRect(bx, y, statW, 44, 6, 6, 'FD');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7.2);
+    doc.setTextColor(...COLORS.muted);
+    doc.text(s[0].toUpperCase(), bx+10, y+16, {maxWidth: statW-20});
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(18);
+    doc.setTextColor(...COLORS.navy);
+    doc.text(String(s[1]), bx+10, y+36);
+  });
+  y += 44 + 16;
+
+  const servicosArr = Array.from(servicosSelecionados);
+  const outroServico = val('f_outro_servico');
+  if(outroServico) servicosArr.push(outroServico + ' (outro)');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(7.3);
+  doc.setTextColor(...COLORS.muted);
+  ensureSpace(16);
+  doc.text('DEMAIS SERVIÇOS REALIZADOS', marginX, y);
+  y += 12;
+  if(servicosArr.length===0){
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10.5);
+    doc.setTextColor(...COLORS.text);
+    ensureSpace(14);
+    doc.text('Nenhum item adicional marcado.', marginX, y);
+    y += 18;
+  } else {
+    servicosArr.forEach(item=>{
+      ensureSpace(16);
+      doc.setFillColor(...COLORS.green);
+      doc.circle(marginX+4, y-3, 4, 'F');
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10.5);
+      doc.setTextColor(...COLORS.text);
+      const lines = doc.splitTextToSize(item, contentW-18);
+      doc.text(lines, marginX+14, y);
+      y += lines.length*13 + 4;
+    });
+    y += 4;
+  }
+  textBlock('Observações — serviços realizados', val('f_obs_servicos'));
+
+  // OCORRÊNCIAS E RECOMENDAÇÕES
+  sectionHeader('OCORRÊNCIAS E RECOMENDAÇÕES', COLORS.brown);
+  textBlock('Ocorrências identificadas', val('f_ocorrencias'));
+  textBlock('Recomendações', val('f_recomendacoes'));
+  textBlock('Observações adicionais', val('f_obs_adicionais'));
+
+  // REGISTRO FOTOGRÁFICO
+  if(photos.length>0){
+    sectionHeader('REGISTRO FOTOGRÁFICO (' + photos.length + ' FOTOS)', COLORS.purple);
+    const gap = 12;
+    const photoW = (contentW - gap)/2;
+    const photoH = 110;
+    let col = 0, rowStartY = y;
+    photos.forEach((p, idx)=>{
+      if(col===0){ ensureSpace(photoH+30); rowStartY = y; }
+      const px = marginX + col*(photoW+gap);
+      try{
+        doc.addImage(p.dataUrl, 'JPEG', px, rowStartY, photoW, photoH, undefined, 'FAST');
+      }catch(e){
+        try{ doc.addImage(p.dataUrl, 'PNG', px, rowStartY, photoW, photoH, undefined,'FAST'); }catch(e2){}
+      }
+      doc.setDrawColor(...COLORS.line);
+      doc.roundedRect(px, rowStartY, photoW, photoH, 3, 3, 'D');
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...COLORS.muted);
+      doc.text(p.legend || ('Foto ' + (idx+1)), px, rowStartY+photoH+12, {maxWidth: photoW});
+      col++;
+      if(col===2){ col=0; y = rowStartY + photoH + 22; }
+    });
+    if(col===1){ y = rowStartY + photoH + 22; }
+  }
+
+  // ASSINATURAS
+  sectionHeader('ASSINATURAS', COLORS.purple2);
+  function sigBlock(nomeLabel, nomeVal, canvasId){
+    ensureSpace(90);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7.3);
+    doc.setTextColor(...COLORS.muted);
+    doc.text(nomeLabel.toUpperCase(), marginX, y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(11);
+    doc.setTextColor(...COLORS.text);
+    doc.text(nomeVal || '—', marginX, y+13);
+    y += 22;
+    const canvas = document.getElementById(canvasId);
+    doc.setDrawColor(...COLORS.line);
+    doc.roundedRect(marginX, y, contentW, 70, 4, 4, 'D');
+    if(canvas.dataset.used){
+      try{
+        const dataUrl = canvas.toDataURL('image/png');
+        doc.addImage(dataUrl, 'PNG', marginX+4, y+4, contentW-8, 62);
+      }catch(e){}
+    }
+    y += 70 + 18;
+  }
+  sigBlock('Nome do responsável pela visita', val('f_nome_visita') || tecnico, 'sig1');
+  sigBlock('Nome do responsável pelo acompanhamento', val('f_nome_acomp') || val('f_responsavel'), 'sig2');
+
+  // Footer on all pages
+  const totalPages = doc.internal.getNumberOfPages();
+  for(let i=1;i<=totalPages;i++){
+    doc.setPage(i);
+    doc.setDrawColor(...COLORS.line);
+    doc.line(marginX, pageH-36, pageW-marginX, pageH-36);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...COLORS.muted);
+    doc.text('Desentop Mogi — Relatório gerado em ' + todayISOForFooter(), marginX, pageH-22);
+    doc.text('Página ' + i + ' de ' + totalPages, pageW-marginX, pageH-22, {align:'right'});
+  }
+
+  const dataStr = data.replace(/-/g,'');
+  const clienteSlug = cliente.replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+  lastPdfName = `Relatorio_${clienteSlug}_${dataStr}_V${pacoteSelecionado}.pdf`;
+  lastPdfBlob = doc.output('blob');
+
+  doc.save(lastPdfName);
+  document.getElementById('shareBtn').style.display = 'block';
+  showStatus('PDF gerado com sucesso: ' + lastPdfName, 'ok');
+}
+
+async function compartilharWhatsApp(){
+  if(!lastPdfBlob){ showStatus('Gere o PDF primeiro.', 'err'); return; }
+  try{
+    const file = new File([lastPdfBlob], lastPdfName, {type:'application/pdf'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:'Relatório de Visita', text:'Relatório de Visita Técnica — Desentop Mogi'});
+      return;
+    }
+  }catch(e){ /* fall through */ }
+  showStatus('Compartilhamento direto não suportado neste navegador. Abra o PDF baixado e use o botão de compartilhar para enviar pelo WhatsApp.', 'ok');
+}
+</script>
+</body>
+</html>
